@@ -1,13 +1,23 @@
+import os
 from flask import Flask, render_template, url_for, request, session, redirect
-from flask.ext.pymongo import PyMongo
+from flask_pymongo import PyMongo
+from dotenv import load_dotenv
 import bcrypt
+
+load_dotenv()
+
+MONGO_USERNAME = os.getenv('MONGO_USERNAME')
+MONGO_DBNAME = os.getenv('MONGO_DBNAME')
+MONGO_URI = os.getenv('MONGO_URI')
+
 
 app = Flask(__name__)
 
-app.config['MONGO_DBNAME'] = 'mongologinexample'
-app.config['MONGO_URI'] = 'mongodb://pretty:printed@ds021731.mlab.com:21731/mongologinexample'
-
+app.config['MONGO_DBNAME'] = MONGO_DBNAME
+app.config['MONGO_URI'] = MONGO_URI
 mongo = PyMongo(app)
+
+
 
 @app.route('/')
 def index():
@@ -19,7 +29,7 @@ def index():
 @app.route('/login', methods=['POST'])
 def login():
     users = mongo.db.users
-    login_user = users.find_one({'name' : request.form['username']})
+    login_user = users.find_one({'name': request.form['username']})
 
     if login_user:
         if bcrypt.hashpw(request.form['pass'].encode('utf-8'), login_user['password'].encode('utf-8')) == login_user['password'].encode('utf-8'):
@@ -32,17 +42,18 @@ def login():
 def register():
     if request.method == 'POST':
         users = mongo.db.users
-        existing_user = users.find_one({'name' : request.form['username']})
+        existing_user = users.find_one({'name': request.form['username']})
 
         if existing_user is None:
             hashpass = bcrypt.hashpw(request.form['pass'].encode('utf-8'), bcrypt.gensalt())
-            users.insert({'name' : request.form['username'], 'password' : hashpass})
+            users.insert({'name': request.form['username'], 'password': hashpass})
             session['username'] = request.form['username']
             return redirect(url_for('index'))
         
         return 'That username already exists!'
 
     return render_template('register.html')
+
 
 if __name__ == '__main__':
     app.secret_key = 'mysecret'
