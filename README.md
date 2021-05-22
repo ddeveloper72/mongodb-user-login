@@ -1,4 +1,4 @@
-# MongoDB Login Session
+# User-Login-with-mongoDB-ATLAS
 
 User registration and login session.  User data is hosted remotely on MongoDB ATLAS.
 
@@ -12,7 +12,8 @@ User registration and login session.  User data is hosted remotely on MongoDB AT
 *   Verify user credentials using MongoDB Compass Community
 ## Acceptations
 
-This code was based on a tutorial by Pretty Printed first published in April 2016
+This code is based on a tutorial by Pretty Printed first published in April 2016.
+The DB URI was relocated to a .env file so that the project would still work, using the new mongoDB Atlas URI path, eg "MONGO_URI=mongodb+srv://mytestdb.unahc.mongodb.net/myFirstDatabase"
 ## Deployment
 
 1.  This project can be forked from the GitHub repository.
